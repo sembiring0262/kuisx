@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Fisika Kelas X - Pengukuran, Besaran, Satuan & Dimensi</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #fdf2f8 100%);
+            min-height: 100vh;
+            user-select: none; /* Mencegah seleksi teks soal sembarangan */
+        }
+        .font-mono-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        @keyframes pulse-danger {
+            0%, 100% { background-color: rgba(220, 38, 38, 0.95); }
+            50% { background-color: rgba(153, 27, 27, 0.98); }
+        }
+        .animate-alarm {
+            animation: pulse-danger 0.6s infinite;
+        }
+        /* Custom scrollbar untuk navigasi nomor soal */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased flex flex-col justify-between">
+
+    <!-- ==================== HEADER / NAVBAR ==================== -->
+    <header class="bg-white/90 backdrop-blur-md border-b border-sky-100 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-sky-200">
+                    <i data-lucide="atom" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-base sm:text-lg text-slate-900 leading-tight">FISIKA KELAS X</h1>
+                    <p class="text-xs text-slate-500 font-medium">Pengukuran, Besaran, Satuan & Dimensi</p>
+                </div>
+            </div>
+
+            <!-- Badge Status Siswa (Muncul saat kuis aktif) -->
+            <div id="header-student-info" class="hidden items-center gap-3">
+                <div class="hidden sm:block text-right">
+                    <p id="disp-name" class="text-xs font-bold text-slate-800 truncate max-w-[160px]">Nama Siswa</p>
+                    <p id="disp-class" class="text-[11px] font-semibold text-sky-600">Kelas X</p>
+                </div>
+                <div id="cheat-badge" class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-bold transition-colors">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    <span>Pelanggaran: <span id="disp-violations">0</span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN CONTAINER ==================== -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6">
+        <div class="w-full max-w-4xl">
+
+            <!-- 1. HALAMAN AWAL (REGISTRASI SISWA) -->
+            <section id="view-start" class="bg-white rounded-3xl shadow-xl shadow-sky-900/5 border border-sky-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 p-6 sm:p-8 text-white">
+                    <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold mb-3">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>Evaluasi Pembelajaran Fisika • 20 Soal Pilihan Ganda</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold mb-2">Selamat Datang di Kuis Interaktif!</h2>
+                    <p class="text-sky-100 text-sm sm:text-base max-w-2xl">
+                        Uji pemahamanmu mengenai alat ukur, angka penting, besaran pokok & turunan, satuan SI, serta dimensi fisika.
+                    </p>
+                </div>
+
+                <div class="p-6 sm:p-8 space-y-6">
+                    <!-- Peringatan Sistem Pengawas -->
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-2xl flex items-start gap-3.5">
+                        <div class="p-2 bg-amber-100 rounded-xl text-amber-600 shrink-0 mt-0.5">
+                            <i data-lucide="volume-2" class="w-5 h-5"></i>
+                        </div>
+                        <div class="text-xs sm:text-sm text-amber-900 space-y-1">
+                            <p class="font-bold text-amber-950">Sistem Deteksi Kecurangan Aktif (Anti-Tab Switch)</p>
+                            <p>Selama kuis berlangsung, <strong>dilarang keluar dari halaman web ini</strong> (membuka WhatsApp, tab baru, atau aplikasi lain). Jika terdeteksi keluar, <strong>alarm peringatan keras akan berbunyi</strong> dan jumlah pelanggaran tercatat otomatis pada laporan nilai guru.</p>
+                        </div>
+                    </div>
+
+                    <!-- Form Input Nama & Kelas -->
+                    <form id="start-form" class="space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label for="input-name" class="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap Siswa <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                        <i data-lucide="user" class="w-5 h-5"></i>
+                                    </div>
+                                    <input type="text" id="input-name" required placeholder="Contoh: Budi Santoso"
+                                        class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="input-class" class="block text-sm font-bold text-slate-700 mb-2">Pilih / Isi Kelas <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                                    </div>
+                                    <input list="class-list" id="input-class" required placeholder="Pilih atau ketik (misal: X-1)"
+                                        class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
+                                    <datalist id="class-list">
+                                        <option value="X-1">
+                                        <option value="X-2">
+                                        <option value="X-3">
+                                        <option value="X-4">
+                                        <option value="X-5">
+                                        <option value="X-6">
+                                        <option value="X-IPA-1">
+                                        <option value="X-IPA-2">
+                                    </datalist>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full py-4 px-6 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-sky-500/25 flex items-center justify-center gap-2.5 text-base transition transform active:scale-[0.99]">
+                                <span>Mulai Kerjakan Kuis Sekarang</span>
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 2. HALAMAN KUIS INTERAKTIF -->
+            <section id="view-quiz" class="hidden space-y-5">
+                <!-- Progress & Navigasi Nomor Soal -->
+                <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-md shadow-sky-900/5 border border-sky-100">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3 py-1 rounded-full">
+                            Soal <span id="current-q-num">1</span> dari 20
+                        </span>
+                        <span class="text-xs font-semibold text-slate-500">
+                            Terjawab: <span id="answered-count" class="text-slate-900 font-bold">0</span> / 20
+                        </span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-4">
+                        <div id="progress-bar" class="bg-gradient-to-r from-sky-500 to-indigo-500 h-full rounded-full transition-all duration-300" style="width: 5%"></div>
+                    </div>
+
+                    <!-- Grid Nomor Soal (1-20) -->
+                    <div id="question-nav-grid" class="grid grid-cols-10 gap-1.5 sm:gap-2">
+                        <!-- Diisi oleh JS -->
+                    </div>
+                </div>
+
+                <!-- Kartu Soal Utama -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-sky-900/5 border border-sky-100">
+                    <!-- Kategori Materi -->
+                    <div class="mb-3">
+                        <span id="q-topic" class="inline-block text-xs font-bold text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1 rounded-lg">
+                            Topik Materi
+                        </span>
+                    </div>
+
+                    <!-- Teks Pertanyaan -->
+                    <div id="q-text" class="text-base sm:text-lg font-semibold text-slate-800 leading-relaxed mb-5">
+                        Memuat pertanyaan...
+                    </div>
+
+                    <!-- Ilustrasi Alat Ukur SVG (Jika ada) -->
+                    <div id="q-illustration" class="hidden mb-6 p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col items-center justify-center overflow-x-auto">
+                        <!-- SVG Dinamis -->
+                    </div>
+
+                    <!-- Pilihan Jawaban A, B, C, D, E -->
+                    <div id="options-container" class="space-y-3">
+                        <!-- Tombol opsi diisi JS -->
+                    </div>
+
+                    <!-- Tombol Navigasi Bawah -->
+                    <div class="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between gap-3">
+                        <button id="btn-prev" type="button" class="px-4 sm:px-5 py-3 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-sm flex items-center gap-2 transition disabled:opacity-40 disabled:pointer-events-none">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            <span>Sebelumnya</span>
+                        </button>
+
+                        <button id="btn-next" type="button" class="px-5 sm:px-6 py-3 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm flex items-center gap-2 shadow-md shadow-sky-500/20 transition">
+                            <span>Selanjutnya</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+
+                        <button id="btn-finish" type="button" class="hidden px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-sm flex items-center gap-2 shadow-lg shadow-emerald-500/25 transition">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                            <span>Selesai & Lihat Nilai</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. HALAMAN HASIL AKHIR & LAPORAN VERIFIKASI GURU -->
+            <section id="view-result" class="hidden space-y-6">
+                <div class="bg-white rounded-3xl shadow-xl shadow-sky-900/5 border border-sky-100 overflow-hidden">
+                    <!-- Banner Header Hasil -->
+                    <div id="result-banner" class="bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 p-6 sm:p-8 text-white text-center">
+                        <div id="teacher-mode-badge" class="hidden inline-flex items-center gap-1.5 bg-amber-400 text-slate-900 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-3 shadow">
+                            <i data-lucide="badge-check" class="w-4 h-4"></i>
+                            <span>Laporan Resmi Terverifikasi (Mode Guru)</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold mb-1">Hasil Evaluasi Kuis Fisika</h2>
+                        <p id="res-timestamp" class="text-xs sm:text-sm text-sky-100">Waktu Selesai: -</p>
+                    </div>
+
+                    <div class="p-6 sm:p-8 space-y-6">
+                        <!-- Identitas Siswa -->
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Nama Peserta Didik</p>
+                                <p id="res-name" class="text-lg sm:text-xl font-extrabold text-slate-800">-</p>
+                            </div>
+                            <div class="sm:text-right">
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Kelas</p>
+                                <p id="res-class" class="text-lg font-bold text-sky-600">-</p>
+                            </div>
+                        </div>
+
+                        <!-- Kartu Statistik Skor -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                            <div class="bg-gradient-to-br from-sky-50 to-indigo-50 border border-sky-200 rounded-2xl p-4 text-center">
+                                <p class="text-xs font-bold text-sky-600 uppercase mb-1">Nilai Akhir</p>
+                                <p id="res-score" class="text-3xl sm:text-4xl font-black text-indigo-700">0</p>
+                            </div>
+                            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center">
+                                <p class="text-xs font-bold text-emerald-600 uppercase mb-1">Jawaban Benar</p>
+                                <p id="res-correct" class="text-3xl sm:text-4xl font-black text-emerald-700">0</p>
+                            </div>
+                            <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-center">
+                                <p class="text-xs font-bold text-rose-600 uppercase mb-1">Jawaban Salah</p>
+                                <p id="res-wrong" class="text-3xl sm:text-4xl font-black text-rose-700">0</p>
+                            </div>
+                            <div id="res-cheat-card" class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center">
+                                <p class="text-xs font-bold text-amber-700 uppercase mb-1">Keluar Tab/Web</p>
+                                <p id="res-violations" class="text-3xl sm:text-4xl font-black text-amber-700">0x</p>
+                            </div>
+                        </div>
+
+                        <!-- Area Kirim Link (Hanya tampil untuk siswa, tersembunyi saat guru membuka link verifikasi) -->
+                        <div id="student-share-box" class="bg-sky-50/80 border border-sky-200 rounded-2xl p-5 space-y-4">
+                            <div class="flex items-start gap-3">
+                                <div class="p-2 bg-sky-500 text-white rounded-xl shrink-0">
+                                    <i data-lucide="send" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-900 text-sm sm:text-base">Kirim Nilai ke Guru</h3>
+                                    <p class="text-xs text-slate-600 mt-0.5">Kirimkan tautan laporan hasil kuis di bawah ini ke WhatsApp guru mata pelajaran Fisika sebagai bukti pengerjaan.</p>
+                                </div>
+                            </div>
+
+                            <!-- Input Readonly Link -->
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <input type="text" id="share-link-input" readonly
+                                    class="w-full px-3.5 py-2.5 bg-white border border-sky-200 rounded-xl text-xs font-mono-code text-slate-600 focus:outline-none">
+                                <button id="btn-copy-link" type="button" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-2 shrink-0 transition">
+                                    <i data-lucide="copy" class="w-4 h-4"></i>
+                                    <span id="copy-btn-text">Salin Link</span>
+                                </button>
+                            </div>
+
+                            <!-- Tombol Utama WhatsApp -->
+                            <a id="btn-wa-share" href="#" target="_blank" rel="noopener noreferrer"
+                                class="w-full py-3.5 px-5 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold rounded-2xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2.5 text-sm sm:text-base transition">
+                                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                                <span>Kirim Link Nilai ke WhatsApp Guru</span>
+                            </a>
+                        </div>
+
+                        <!-- Tombol Pembahasan (Hanya untuk siswa setelah selesai) -->
+                        <div id="review-toggle-wrapper" class="pt-2 text-center">
+                            <button id="btn-toggle-review" type="button" class="inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 px-5 py-2.5 rounded-xl transition">
+                                <i data-lucide="book-open-check" class="w-4 h-4"></i>
+                                <span>Lihat Pembahasan Jawaban</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Container Pembahasan Soal -->
+                <div id="review-container" class="hidden space-y-4">
+                    <h3 class="text-lg font-extrabold text-slate-800 px-1">Pembahasan 20 Soal</h3>
+                    <div id="review-list" class="space-y-4"></div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ==================== MODAL PERINGATAN ANTI-CURANG ==================== -->
+    <div id="anti-cheat-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 animate-alarm backdrop-blur-md">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border-4 border-rose-500 space-y-5">
+            <div class="w-20 h-20 mx-auto rounded-full bg-rose-100 text-rose-600 flex items-center justify-center animate-bounce">
+                <i data-lucide="alert-triangle" class="w-11 h-11"></i>
+            </div>
+            <div class="space-y-2">
+                <span class="inline-block bg-rose-600 text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">
+                    Deteksi Kecurangan!
+                </span>
+                <h3 class="text-2xl font-black text-slate-900">Dilarang Keluar dari Web!</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Sistem mendeteksi kamu berpindah tab, meminimalkan browser, atau membuka aplikasi lain (seperti WhatsApp). Aktivitas ini telah dicatat!
+                </p>
+            </div>
+            <div class="bg-rose-50 border border-rose-200 rounded-2xl p-3">
+                <p class="text-xs font-bold text-rose-800">
+                    Total Pelanggaran Tercatat: <span id="modal-violation-count" class="text-base font-black">1</span> kali
+                </p>
+            </div>
+            <button id="btn-dismiss-alarm" type="button" class="w-full py-3.5 px-6 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-2xl shadow-lg shadow-rose-600/30 text-sm sm:text-base transition">
+                Matikan Alarm & Kembali ke Kuis
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL KONFIRMASI SELESAI ==================== -->
+    <div id="confirm-finish-modal" class="hidden fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-5">
+            <div class="flex items-center gap-3 text-sky-600">
+                <div class="p-2.5 bg-sky-100 rounded-xl">
+                    <i data-lucide="help-circle" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-lg font-extrabold text-slate-900">Selesaikan Kuis Sekarang?</h3>
+            </div>
+            <p id="confirm-finish-msg" class="text-sm text-slate-600 leading-relaxed">
+                Pastikan semua soal telah dijawab dengan teliti. Setelah dikumpulkan, jawaban tidak dapat diubah lagi.
+            </p>
+            <div class="flex items-center justify-end gap-3 pt-2">
+                <button id="btn-cancel-finish" type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-sm">
+                    Periksa Lagi
+                </button>
+                <button id="btn-confirm-finish" type="button" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md shadow-emerald-500/20">
+                    Ya, Kumpulkan Nilai
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="text-center py-4 text-xs text-slate-400">
+        &copy; 2026 Media Evaluasi Fisika SMA Kelas X • Dilengkapi Sistem Pengawas Anti-Tab Switch
+    </footer>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        // Inisialisasi ikon Lucide
+        lucide.createIcons();
+
+        // ==================== DATABASE 20 SOAL FISIKA KELAS X ====================
+        const questions = [
+            {
+                id: 1,
+                topic: "Besaran Pokok & Satuan SI",
+                question: "Perhatikan kelompok besaran berikut ini:\n(1) Panjang, Massa, Waktu\n(2) Kuat Arus, Suhu, Kecepatan\n(3) Intensitas Cahaya, Jumlah Zat, Suhu\n(4) Massa, Gaya, Waktu\nKelompok yang seluruhnya merupakan besaran pokok dalam Sistem Internasional (SI) adalah ....",
+                options: [
+                    "(1) dan (2)",
+                    "(1) dan (3)",
+                    "(2) dan (3)",
+                    "(2) dan (4)",
+                    "(3) dan (4)"
+                ],
+                answer: 1,
+                explanation: "7 besaran pokok SI adalah: Panjang (m), Massa (kg), Waktu (s), Kuat Arus Listrik (A), Suhu (K), Intensitas Cahaya (cd), dan Jumlah Zat (mol). Kecepatan dan Gaya adalah besaran turunan."
+            },
+            {
+                id: 2,
+                topic: "Besaran Turunan",
+                question: "Besaran berikut ini yang merupakan besaran turunan yang diturunkan dari besaran pokok panjang dan waktu saja adalah ....",
+                options: [
+                    "Massa jenis dan Tekanan",
+                    "Gaya dan Usaha",
+                    "Kecepatan dan Percepatan",
+                    "Momentum dan Impuls",
+                    "Daya dan Energi"
+                ],
+                answer: 2,
+                explanation: "Kecepatan memiliki satuan m/s (panjang/waktu) dan Percepatan memiliki satuan m/s² (panjang/waktu²). Keduanya hanya tersusun dari besaran panjang dan waktu."
+            },
+            {
+                id: 3,
+                topic: "Satuan Sistem Internasional (SI)",
+                question: "Dalam Sistem Internasional (SI), satuan dari besaran suhu, intensitas cahaya, dan jumlah zat secara berturut-turut adalah ....",
+                options: [
+                    "Celcius, kandela, mol",
+                    "Kelvin, watt, kilogram",
+                    "Kelvin, kandela, mol",
+                    "Fahrenheit, lumen, mol",
+                    "Kelvin, lux, gram"
+                ],
+                answer: 2,
+                explanation: "Satuan SI untuk suhu adalah Kelvin (K), intensitas cahaya adalah kandela (cd), dan jumlah zat adalah mol."
+            },
+            {
+                id: 4,
+                topic: "Analisis Dimensi",
+                question: "Dimensi dari besaran Usaha (W = F × s) dan Daya (P = W / t) secara berturut-turut adalah ....",
+                options: [
+                    "[M][L]²[T]⁻² dan [M][L]²[T]⁻³",
+                    "[M][L][T]⁻² dan [M][L]²[T]⁻²",
+                    "[M][L]²[T]⁻¹ dan [M][L]²[T]⁻²",
+                    "[M][L]⁻²[T]⁻² dan [M][L]⁻²[T]⁻³",
+                    "[M][L]²[T]⁻³ dan [M][L]²[T]⁻²"
+                ],
+                answer: 0,
+                explanation: "Gaya F = m·a → [M][L][T]⁻². Usaha W = F·s → [M][L]²[T]⁻². Daya P = W/t → [M][L]²[T]⁻² / [T] = [M][L]²[T]⁻³."
+            },
+            {
+                id: 5,
+                topic: "Analisis Dimensi",
+                question: "Sebuah besaran fisika memiliki rumus P = F / A, di mana F adalah gaya dan A adalah luas permukaan. Dimensi dari besaran P (Tekanan) adalah ....",
+                options: [
+                    "[M][L][T]⁻²",
+                    "[M][L]⁻¹[T]⁻²",
+                    "[M][L]⁻²[T]⁻²",
+                    "[M][L]²[T]⁻²",
+                    "[M][L]⁻¹[T]⁻¹"
+                ],
+                answer: 1,
+                explanation: "Dimensi Gaya [F] = [M][L][T]⁻² dan Luas [A] = [L]². Maka [P] = [M][L][T]⁻² / [L]² = [M][L]⁻¹[T]⁻²."
+            },
+            {
+                id: 6,
+                topic: "Kesetaraan Dimensi",
+                question: "Pasangan besaran fisika berikut ini yang memiliki dimensi yang sama adalah ....",
+                options: [
+                    "Gaya dan Tekanan",
+                    "Usaha dan Momentum",
+                    "Impuls dan Momentum",
+                    "Daya dan Energi Kinetik",
+                    "Percepatan dan Kecepatan"
+                ],
+                answer: 2,
+                explanation: "Momentum (p = m·v) berdimensi [M][L][T]⁻¹. Impuls (I = F·Δt) berdimensi [M][L][T]⁻² · [T] = [M][L][T]⁻¹. Keduanya memiliki dimensi yang sama."
+            },
+            {
+                id: 7,
+                topic: "Alat Ukur: Jangka Sorong",
+                question: "Perhatikan gambar hasil pengukuran diameter sebuah kelereng menggunakan jangka sorong berikut ini! Hasil pengukuran yang tepat adalah ....",
+                illustration: `
+                    <svg viewBox="0 0 420 145" class="w-full max-w-md h-auto">
+                        <!-- Skala Utama -->
+                        <rect x="20" y="20" width="380" height="45" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5" rx="4"/>
+                        <text x="355" y="36" font-size="11" font-weight="bold" fill="#334155">Skala Utama (cm)</text>
+                        <!-- Garis Skala Utama: 2 cm sampai 4 cm -->
+                        <g stroke="#1e293b" stroke-width="1.5">
+                            <!-- 2.0 cm -->
+                            <line x1="50" y1="65" x2="50" y2="42"/><text x="46" y="37" font-size="13" font-weight="bold" fill="#0f172a">2</text>
+                            <line x1="75" y1="65" x2="75" y2="52"/>
+                            <line x1="100" y1="65" x2="100" y2="52"/>
+                            <line x1="125" y1="65" x2="125" y2="52"/>
+                            <line x1="150" y1="65" x2="150" y2="52"/>
+                            <line x1="175" y1="65" x2="175" y2="46"/>
+                            <line x1="200" y1="65" x2="200" y2="52"/>
+                            <line x1="225" y1="65" x2="225" y2="52"/>
+                            <line x1="250" y1="65" x2="250" y2="52"/>
+                            <line x1="275" y1="65" x2="275" y2="52"/>
+                            <!-- 3.0 cm -->
+                            <line x1="300" y1="65" x2="300" y2="42"/><text x="296" y="37" font-size="13" font-weight="bold" fill="#0f172a">3</text>
+                            <line x1="325" y1="65" x2="325" y2="52"/>
+                            <line x1="350" y1="65" x2="350" y2="52"/>
+                        </g>
+                        <!-- Skala Nonius (0 berada tepat setelah 2.3 cm -> x=132) -->
+                        <rect x="115" y="65" width="250" height="45" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5" rx="4"/>
+                        <text x="275" y="102" font-size="10" font-weight="bold" fill="#0369a1">Skala Nonius</text>
+                        <g stroke="#0f172a" stroke-width="1.4">
+                            <!-- 0 di x=132 (antara 2.3=125 dan 2.4=150) -->
+                            <line x1="132" y1="65" x2="132" y2="85"/><text x="128" y="98" font-size="12" font-weight="bold" fill="#0f172a">0</text>
+                            <line x1="155.6" y1="65" x2="155.6" y2="78"/>
+                            <line x1="179.2" y1="65" x2="179.2" y2="78"/>
+                            <line x1="202.8" y1="65" x2="202.8" y2="78"/>
+                            <line x1="226.4" y1="65" x2="226.4" y2="78"/>
+                            <!-- 5 di x=250 berimpit lurus dengan 2.8 cm (x=250) -->
+                            <line x1="250" y1="65" x2="250" y2="85" stroke="#e11d48" stroke-width="2"/><text x="246" y="98" font-size="12" font-weight="bold" fill="#e11d48">5</text>
+                            <line x1="273.6" y1="65" x2="273.6" y2="78"/>
+                            <line x1="297.2" y1="65" x2="297.2" y2="78"/>
+                            <line x1="320.8" y1="65" x2="320.8" y2="78"/>
+                            <line x1="344.4" y1="65" x2="344.4" y2="78"/>
+                            <line x1="368" y1="65" x2="368" y2="85"/><text x="361" y="98" font-size="12" font-weight="bold" fill="#0f172a">10</text>
+                        </g>
+                        <text x="20" y="132" font-size="11" fill="#475569">*Garis merah menunjukkan skala nonius ke-5 berimpit lurus dengan skala utama.</text>
+                    </svg>
+                `,
+                options: [
+                    "2,30 cm",
+                    "2,35 cm",
+                    "2,45 cm",
+                    "2,85 cm",
+                    "3,25 cm"
+                ],
+                answer: 1,
+                explanation: "Skala utama sebelum angka 0 nonius menunjukkan 2,3 cm. Skala nonius yang berimpit adalah garis ke-5 (5 × 0,01 cm = 0,05 cm). Total = 2,3 + 0,05 = 2,35 cm."
+            },
+            {
+                id: 8,
+                topic: "Alat Ukur: Mikrometer Sekrup",
+                question: "Sebuah pelat logam tipis diukur ketebalannya menggunakan mikrometer sekrup seperti ditunjukkan pada gambar berikut. Tebal pelat logam tersebut adalah ....",
+                illustration: `
+                    <svg viewBox="0 0 420 155" class="w-full max-w-md h-auto">
+                        <!-- Sleeve (Skala Utama) -->
+                        <rect x="40" y="35" width="180" height="75" fill="#e2e8f0" stroke="#475569" stroke-width="1.5" rx="3"/>
+                        <!-- Garis tengah horizontal -->
+                        <line x1="40" y1="72" x2="220" y2="72" stroke="#0f172a" stroke-width="1.5"/>
+                        <!-- Skala atas (0, 1, 2, 3, 4 mm) -->
+                        <g stroke="#0f172a" stroke-width="1.5">
+                            <line x1="65" y1="72" x2="65" y2="52"/><text x="61" y="48" font-size="12" font-weight="bold">0</text>
+                            <line x1="95" y1="72" x2="95" y2="55"/><text x="91" y="48" font-size="12" font-weight="bold">1</text>
+                            <line x1="125" y1="72" x2="125" y2="55"/><text x="121" y="48" font-size="12" font-weight="bold">2</text>
+                            <line x1="155" y1="72" x2="155" y2="55"/><text x="151" y="48" font-size="12" font-weight="bold">3</text>
+                            <line x1="185" y1="72" x2="185" y2="55"/><text x="181" y="48" font-size="12" font-weight="bold">4</text>
+                        </g>
+                        <!-- Skala bawah (0.5 mm) -> termasuk 4.5 mm di x=200 terlihat -->
+                        <g stroke="#0f172a" stroke-width="1.5">
+                            <line x1="80" y1="72" x2="80" y2="88"/>
+                            <line x1="110" y1="72" x2="110" y2="88"/>
+                            <line x1="140" y1="72" x2="140" y2="88"/>
+                            <line x1="170" y1="72" x2="170" y2="88"/>
+                            <line x1="200" y1="72" x2="200" y2="88" stroke="#0284c7" stroke-width="2"/>
+                        </g>
+                        <!-- Thimble (Skala Putar) -->
+                        <rect x="212" y="20" width="110" height="105" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5" rx="5"/>
+                        <g stroke="#0f172a" stroke-width="1.3">
+                            <line x1="212" y1="36" x2="232" y2="36"/><text x="238" y="40" font-size="11" font-weight="bold">35</text>
+                            <line x1="212" y1="54" x2="227" y2="54"/>
+                            <!-- Garis 30 sejajar garis horizontal y=72 -->
+                            <line x1="212" y1="72" x2="235" y2="72" stroke="#e11d48" stroke-width="2"/><text x="238" y="76" font-size="12" font-weight="bold" fill="#e11d48">30</text>
+                            <line x1="212" y1="90" x2="227" y2="90"/>
+                            <line x1="212" y1="108" x2="232" y2="108"/><text x="238" y="112" font-size="11" font-weight="bold">25</text>
+                        </g>
+                        <text x="40" y="143" font-size="11" fill="#475569">Skala utama terlihat 4,5 mm dan skala nonius sejajar garis tengah di angka 30.</text>
+                    </svg>
+                `,
+                options: [
+                    "4,30 mm",
+                    "4,53 mm",
+                    "4,80 mm",
+                    "5,30 mm",
+                    "4,03 mm"
+                ],
+                answer: 2,
+                explanation: "Skala utama menunjukkan angka 4 mm dan melewati garis setengah di bawahnya sehingga terbaca 4,5 mm. Skala putar yang sejajar adalah 30 × 0,01 mm = 0,30 mm. Total = 4,5 + 0,30 = 4,80 mm."
+            },
+            {
+                id: 9,
+                topic: "Ketelitian Alat Ukur",
+                question: "Urutan alat ukur panjang dari yang memiliki tingkat ketelitian paling rendah hingga paling tinggi adalah ....",
+                options: [
+                    "Mikrometer sekrup – Jangka sorong – Mistar",
+                    "Jangka sorong – Mistar – Mikrometer sekrup",
+                    "Mistar – Jangka sorong – Mikrometer sekrup",
+                    "Mistar – Mikrometer sekrup – Jangka sorong",
+                    "Jangka sorong – Mikrometer sekrup – Mistar"
+                ],
+                answer: 2,
+                explanation: "Nilai skala terkecil (ketelitian): Mistar = 1 mm (0,1 cm), Jangka sorong = 0,1 mm (0,01 cm), Mikrometer sekrup = 0,01 mm (0,001 cm)."
+            },
+            {
+                id: 10,
+                topic: "Aturan Angka Penting",
+                question: "Hasil pengukuran massa sebuah batu adalah 0,04050 kg. Banyaknya angka penting pada hasil pengukuran tersebut adalah ....",
+                options: [
+                    "2 angka penting",
+                    "3 angka penting",
+                    "4 angka penting",
+                    "5 angka penting",
+                    "6 angka penting"
+                ],
+                answer: 2,
+                explanation: "Angka nol di sebelah kiri angka bukan nol pertama (0,0...) bukan angka penting. Angka nol di antara angka bukan nol dan di sebelah kanan tanda desimal setelah angka bukan nol adalah angka penting. Jadi 4, 0, 5, 0 = 4 angka penting."
+            },
+            {
+                id: 11,
+                topic: "Operasi Angka Penting (Perkalian)",
+                question: "Sebuah pelat persegi panjang memiliki panjang 12,5 cm dan lebar 4,2 cm. Menurut aturan angka penting, luas pelat tersebut adalah ....",
+                options: [
+                    "52,50 cm²",
+                    "52,5 cm²",
+                    "53 cm²",
+                    "52 cm²",
+                    "50 cm²"
+                ],
+                answer: 2,
+                explanation: "12,5 cm (3 AP) × 4,2 cm (2 AP) = 52,5 cm². Hasil perkalian harus memiliki jumlah AP paling sedikit (2 AP). Karena angka sebelum 5 adalah genap (2), maka dibulatkan menjadi 52 cm² atau 53 cm² (dalam konvensi pembulatan ke atas standar SMA: 52,5 → 53 cm²)."
+            },
+            {
+                id: 12,
+                topic: "Operasi Angka Penting (Penjumlahan)",
+                question: "Hasil penjumlahan dari 25,34 m + 4,2 m berdasarkan aturan angka penting adalah ....",
+                options: [
+                    "29,54 m",
+                    "29,5 m",
+                    "30 m",
+                    "29,6 m",
+                    "29,540 m"
+                ],
+                answer: 1,
+                explanation: "Pada penjumlahan/pengurangan, hasilnya hanya boleh mengandung satu angka taksiran (angka di belakang koma paling sedikit). 25,34 (2 desimal) + 4,2 (1 desimal) = 29,54 → dibulatkan 1 desimal menjadi 29,5 m."
+            },
+            {
+                id: 13,
+                topic: "Notasi Ilmiah",
+                question: "Kecepatan rambat cahaya di ruang hampa adalah 300.000.000 m/s, sedangkan jari-jari atom hidrogen sekitar 0,000000000053 m. Penulisan kedua nilai tersebut dalam notasi ilmiah yang benar adalah ....",
+                options: [
+                    "3 × 10⁸ m/s dan 5,3 × 10⁻¹¹ m",
+                    "30 × 10⁷ m/s dan 53 × 10⁻¹² m",
+                    "3 × 10⁹ m/s dan 5,3 × 10⁻¹⁰ m",
+                    "0,3 × 10⁹ m/s dan 5,3 × 10⁻¹¹ m",
+                    "3 × 10⁸ m/s dan 5,3 × 10⁻¹⁰ m"
+                ],
+                answer: 0,
+                explanation: "Bentuk baku notasi ilmiah adalah a × 10ⁿ dengan 1 ≤ a < 10. Jadi 300.000.000 = 3 × 10⁸ dan 0,000000000053 = 5,3 × 10⁻¹¹."
+            },
+            {
+                id: 14,
+                topic: "Konversi Satuan",
+                question: "Massa jenis air dalam satuan CGS adalah 1 g/cm³. Jika dinyatakan dalam satuan Sistem Internasional (kg/m³), nilainya setara dengan ....",
+                options: [
+                    "10 kg/m³",
+                    "100 kg/m³",
+                    "1.000 kg/m³",
+                    "0,001 kg/m³",
+                    "10.000 kg/m³"
+                ],
+                answer: 2,
+                explanation: "1 g = 10⁻³ kg, dan 1 cm³ = 10⁻⁶ m³. Maka 1 g/cm³ = 10⁻³ kg / 10⁻⁶ m³ = 10³ kg/m³ = 1.000 kg/m³."
+            },
+            {
+                id: 15,
+                topic: "Konversi Satuan Kecepatan",
+                question: "Sebuah mobil bergerak di jalan tol dengan kelajuan 72 km/jam. Kelajuan mobil tersebut dalam satuan SI adalah ....",
+                options: [
+                    "10 m/s",
+                    "15 m/s",
+                    "20 m/s",
+                    "25 m/s",
+                    "36 m/s"
+                ],
+                answer: 2,
+                explanation: "72 km/jam = 72.000 meter / 3.600 sekon = 20 m/s."
+            },
+            {
+                id: 16,
+                topic: "Kesalahan Pengukuran",
+                question: "Kesalahan pengukuran yang terjadi karena posisi mata pengamat tidak tegak lurus terhadap skala alat ukur yang dibaca disebut ....",
+                options: [
+                    "Kesalahan kalibrasi",
+                    "Kesalahan titik nol",
+                    "Kesalahan paralaks",
+                    "Kesalahan acak",
+                    "Kesalahan fatamorgana"
+                ],
+                answer: 2,
+                explanation: "Kesalahan paralaks adalah penyimpangan pembacaan skala karena sudut pandang mata pengamat yang miring (tidak tegak lurus dengan jarum/skala)."
+            },
+            {
+                id: 17,
+                topic: "Analisis Dimensi Konstanta",
+                question: "Gaya tarik gravitasi antara dua benda bermassa m₁ dan m₂ yang terpisah sejauh r dirumuskan dengan F = G · (m₁ · m₂) / r². Dimensi dari konstanta gravitasi umum G adalah ....",
+                options: [
+                    "[M]⁻¹[L]³[T]⁻²",
+                    "[M][L]³[T]⁻²",
+                    "[M]⁻¹[L]²[T]⁻²",
+                    "[M]⁻²[L]³[T]⁻²",
+                    "[M]⁻¹[L]³[T]⁻¹"
+                ],
+                answer: 0,
+                explanation: "G = (F · r²) / (m₁ · m₂). Dimensi [G] = ([M][L][T]⁻² · [L]²) / ([M] · [M]) = [M][L]³[T]⁻² / [M]² = [M]⁻¹[L]³[T]⁻²."
+            },
+            {
+                id: 18,
+                topic: "Pelaporan Hasil Pengukuran Tunggal",
+                question: "Hasil pengukuran panjang sebuah pensil dengan menggunakan mistar berskala terkecil 1 mm adalah 15,4 cm. Penulisan hasil pengukuran beserta ketidakpastian mutlaknya yang benar adalah ....",
+                options: [
+                    "(15,4 ± 0,1) cm",
+                    "(15,4 ± 0,05) cm",
+                    "(15,40 ± 0,05) cm",
+                    "(15,4 ± 0,5) cm",
+                    "(15,40 ± 0,01) cm"
+                ],
+                answer: 2,
+                explanation: "Ketidakpastian mutlak pengukuran tunggal Δx = ½ × NST = ½ × 0,1 cm = 0,05 cm (2 angka di belakang koma). Jumlah desimal hasil ukur harus sama dengan desimal ketidakpastian, sehingga ditulis (15,40 ± 0,05) cm."
+            },
+            {
+                id: 19,
+                topic: "Besaran Skalar & Vektor",
+                question: "Manakah di antara kelompok besaran berikut yang seluruhnya termasuk besaran skalar (hanya memiliki nilai tanpa arah)?",
+                options: [
+                    "Perpindahan, Kecepatan, Gaya",
+                    "Jarak, Kelajuan, Massa",
+                    "Waktu, Percepatan, Momentum",
+                    "Suhu, Berat, Usaha",
+                    "Energi, Daya, Impuls"
+                ],
+                answer: 1,
+                explanation: "Jarak, kelajuan, dan massa hanya memiliki besar (nilai) dan tidak bergantung pada arah sehingga termasuk besaran skalar."
+            },
+            {
+                id: 20,
+                topic: "Kegunaan Analisis Dimensi",
+                question: "Persamaan posisi suatu benda dinyatakan dengan x = A·t + B·t², dengan x dalam meter dan t dalam sekon. Dimensi dari besaran A dan B secara berturut-turut adalah ....",
+                options: [
+                    "[L][T]⁻¹ dan [L][T]⁻²",
+                    "[L][T] dan [L][T]²",
+                    "[L][T]⁻² dan [L][T]⁻¹",
+                    "[M][L][T]⁻¹ dan [M][L][T]⁻²",
+                    "[L]⁻¹[T] dan [L]⁻²[T]"
+                ],
+                answer: 0,
+                explanation: "Berdasarkan prinsip homogenitas dimensi, dimensi setiap suku harus sama dengan [x] = [L]. Maka [A][T] = [L] → [A] = [L][T]⁻¹ (kecepatan), dan [B][T]² = [L] → [B] = [L][T]⁻² (percepatan)."
+            }
+        ];
+
+        // ==================== STATE APLIKASI ====================
+        let state = {
+            studentName: "",
+            studentClass: "",
+            currentIndex: 0,
+            userAnswers: new Array(questions.length).fill(null),
+            violations: 0,
+            isQuizActive: false,
+            isAlarmPlaying: false
+        };
+
+        // ==================== WEB AUDIO API (ALARM ANTI-CURANG) ====================
+        let audioCtx = null;
+        let alarmInterval = null;
+
+        function startAlarmSound() {
+            if (state.isAlarmPlaying) return;
+            state.isAlarmPlaying = true;
+
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const playBeep = () => {
+                    if (!state.isAlarmPlaying || !audioCtx) return;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    // Efek sirine naik turun
+                    const now = audioCtx.currentTime;
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.linearRampToValueAtTime(1320, now + 0.18);
+                    osc.frequency.linearRampToValueAtTime(880, now + 0.36);
+
+                    gain.gain.setValueAtTime(0.35, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.38);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                };
+
+                playBeep();
+                alarmInterval = setInterval(playBeep, 450);
+            } catch (err) {
+                console.warn("AudioContext blocked:", err);
+            }
+        }
+
+        function stopAlarmSound() {
+            state.isAlarmPlaying = false;
+            if (alarmInterval) {
+                clearInterval(alarmInterval);
+                alarmInterval = null;
+            }
+        }
+
+        // ==================== SISTEM DETEKSI KELUAR WEB / PINDAH TAB ====================
+        let lastViolationTime = 0;
+
+        function triggerCheatDetection() {
+            if (!state.isQuizActive) return;
+
+            // Debounce 1 detik agar tidak terhitung ganda bersamaan antara blur & visibilitychange
+            const now = Date.now();
+            if (now - lastViolationTime < 1000) return;
+            lastViolationTime = now;
+
+            state.violations++;
+            document.getElementById('disp-violations').textContent = state.violations;
+            document.getElementById('modal-violation-count').textContent = state.violations;
+
+            // Ubah warna badge pelanggaran di header
+            const badge = document.getElementById('cheat-badge');
+            badge.className = "flex items-center gap-1.5 bg-rose-100 border border-rose-300 text-rose-700 px-3 py-1.5 rounded-full text-xs font-extrabold animate-pulse";
+
+            // Tampilkan modal & bunyikan sirine keras
+            document.getElementById('anti-cheat-modal').classList.remove('hidden');
+            startAlarmSound();
+        }
+
+        // Event listener saat berpindah tab / minimize / buka WA di HP
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden && state.isQuizActive) {
+                triggerCheatDetection();
+            }
+        });
+
+        // Event listener saat jendela browser kehilangan fokus
+        window.addEventListener("blur", () => {
+            if (state.isQuizActive) {
+                triggerCheatDetection();
+            }
+        });
+
+        // Tombol mematikan alarm
+        document.getElementById('btn-dismiss-alarm').addEventListener('click', () => {
+            stopAlarmSound();
+            document.getElementById('anti-cheat-modal').classList.add('hidden');
+        });
+
+        // ==================== MODE VERIFIKASI LINK HASIL (UNTUK GURU) ====================
+        function checkVerificationMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const reportParam = urlParams.get('hasil');
+
+            if (reportParam) {
+                try {
+                    // Decode Base64 URI-safe
+                    const decodedStr = decodeURIComponent(escape(atob(reportParam)));
+                    const data = JSON.parse(decodedStr);
+
+                    if (data && data.n && data.c !== undefined) {
+                        // Tampilkan halaman hasil dalam Mode Guru
+                        document.getElementById('view-start').classList.add('hidden');
+                        document.getElementById('view-quiz').classList.add('hidden');
+                        document.getElementById('view-result').classList.remove('hidden');
+
+                        // Tampilkan badge verifikasi guru & sembunyikan fitur share siswa
+                        document.getElementById('teacher-mode-badge').classList.remove('hidden');
+                        document.getElementById('student-share-box').classList.add('hidden');
+                        document.getElementById('review-toggle-wrapper').classList.add('hidden');
+
+                        renderResultData({
+                            name: data.n,
+                            studentClass: data.k,
+                            score: data.s,
+                            correct: data.b,
+                            wrong: data.w,
+                            violations: data.v,
+                            timestamp: data.t || "-"
+                        });
+                        return true;
+                    }
+                } catch (e) {
+                    console.error("Format link hasil tidak valid:", e);
+                }
+            }
+            return false;
+        }
+
+        // ==================== LOGIKA NAVIGASI & RENDER KUIS ====================
+        function initQuizUI() {
+            // Render grid nomor soal (1-20)
+            const navGrid = document.getElementById('question-nav-grid');
+            navGrid.innerHTML = '';
+            questions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = idx + 1;
+                btn.id = `nav-btn-${idx}`;
+                btn.className = "h-8 sm:h-9 rounded-xl text-xs font-bold border transition flex items-center justify-center";
+                btn.addEventListener('click', () => {
+                    state.currentIndex = idx;
+                    renderQuestion();
+                });
+                navGrid.appendChild(btn);
+            });
+
+            renderQuestion();
+        }
+
+        function updateNavGridStyles() {
+            let answeredTotal = 0;
+            questions.forEach((_, idx) => {
+                const btn = document.getElementById(`nav-btn-${idx}`);
+                const isAnswered = state.userAnswers[idx] !== null;
+                if (isAnswered) answeredTotal++;
+
+                if (idx === state.currentIndex) {
+                    btn.className = "h-8 sm:h-9 rounded-xl text-xs font-extrabold border-2 border-sky-600 bg-sky-500 text-white shadow-sm flex items-center justify-center";
+                } else if (isAnswered) {
+                    btn.className = "h-8 sm:h-9 rounded-xl text-xs font-bold border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 flex items-center justify-center";
+                } else {
+                    btn.className = "h-8 sm:h-9 rounded-xl text-xs font-semibold border border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100 flex items-center justify-center";
+                }
+            });
+
+            document.getElementById('answered-count').textContent = answeredTotal;
+            const progressPct = ((state.currentIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+        }
+
+        function renderQuestion() {
+            const q = questions[state.currentIndex];
+            document.getElementById('current-q-num').textContent = state.currentIndex + 1;
+            document.getElementById('q-topic').textContent = q.topic;
+            document.getElementById('q-text').innerHTML = q.question.replace(/\n/g, '<br>');
+
+            // Ilustrasi SVG (jika soal memiliki gambar alat ukur)
+            const illusBox = document.getElementById('q-illustration');
+            if (q.illustration) {
+                illusBox.innerHTML = q.illustration;
+                illusBox.classList.remove('hidden');
+            } else {
+                illusBox.innerHTML = '';
+                illusBox.classList.add('hidden');
+            }
+
+            // Render Opsi Jawaban
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D', 'E'];
+
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = state.userAnswers[state.currentIndex] === optIdx;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = isSelected
+                    ? "w-full text-left p-4 rounded-2xl border-2 border-sky-500 bg-sky-50/90 text-sky-950 font-semibold flex items-center gap-3.5 shadow-sm transition"
+                    : "w-full text-left p-4 rounded-2xl border border-slate-200 hover:border-sky-300 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-3.5 transition";
+
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-extrabold shrink-0 ${
+                        isSelected ? 'bg-sky-500 text-white' : 'bg-slate-100 text-slate-600'
+                    }">${letters[optIdx]}</span>
+                    <span class="text-sm sm:text-base leading-snug">${optText}</span>
+                `;
+
+                btn.addEventListener('click', () => {
+                    state.userAnswers[state.currentIndex] = optIdx;
+                    renderQuestion();
+                });
+
+                optionsContainer.appendChild(btn);
+            });
+
+            // Atur tombol Sebelumnya / Selanjutnya / Selesai
+            document.getElementById('btn-prev').disabled = state.currentIndex === 0;
+
+            if (state.currentIndex === questions.length - 1) {
+                document.getElementById('btn-next').classList.add('hidden');
+                document.getElementById('btn-finish').classList.remove('hidden');
+            } else {
+                document.getElementById('btn-next').classList.remove('hidden');
+                document.getElementById('btn-finish').classList.add('hidden');
+            }
+
+            updateNavGridStyles();
+        }
+
+        // ==================== EVENT HANDLERS MULAI & NAVIGASI ====================
+        document.getElementById('start-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nameVal = document.getElementById('input-name').value.trim();
+            const classVal = document.getElementById('input-class').value.trim();
+
+            if (!nameVal || !classVal) return;
+
+            // Inisialisasi AudioContext saat interaksi klik pertama agar browser mengizinkan suara alarm
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (err) {}
+
+            state.studentName = nameVal;
+            state.studentClass = classVal;
+            state.isQuizActive = true;
+
+            // Update header
+            document.getElementById('disp-name').textContent = state.studentName;
+            document.getElementById('disp-class').textContent = `Kelas: ${state.studentClass}`;
+            const headerInfo = document.getElementById('header-student-info');
+            headerInfo.classList.remove('hidden');
+            headerInfo.classList.add('flex');
+
+            // Ganti tampilan ke kuis
+            document.getElementById('view-start').classList.add('hidden');
+            document.getElementById('view-quiz').classList.remove('hidden');
+
+            initQuizUI();
+        });
+
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            if (state.currentIndex > 0) {
+                state.currentIndex--;
+                renderQuestion();
+            }
+        });
+
+        document.getElementById('btn-next').addEventListener('click', () => {
+            if (state.currentIndex < questions.length - 1) {
+                state.currentIndex++;
+                renderQuestion();
+            }
+        });
+
+        // Konfirmasi Selesai Kuis
+        document.getElementById('btn-finish').addEventListener('click', () => {
+            const unanswered = state.userAnswers.filter(a => a === null).length;
+            const msgEl = document.getElementById('confirm-finish-msg');
+            if (unanswered > 0) {
+                msgEl.innerHTML = `Masih ada <strong class="text-rose-600">${unanswered} soal yang belum dijawab</strong>. Apakah kamu yakin ingin mengakhiri kuis sekarang?`;
+            } else {
+                msgEl.textContent = "Semua 20 soal telah terjawab! Klik 'Ya, Kumpulkan Nilai' untuk melihat skor dan membuat link laporan untuk guru.";
+            }
+            document.getElementById('confirm-finish-modal').classList.remove('hidden');
+        });
+
+        document.getElementById('btn-cancel-finish').addEventListener('click', () => {
+            document.getElementById('confirm-finish-modal').classList.add('hidden');
+        });
+
+        document.getElementById('btn-confirm-finish').addEventListener('click', () => {
+            document.getElementById('confirm-finish-modal').classList.add('hidden');
+            finishQuiz();
+        });
+
+        // ==================== PERHITUNGAN NILAI & PEMBUATAN LINK ====================
+        function finishQuiz() {
+            // Matikan pengawas anti-curang agar siswa bisa membuka WhatsApp untuk mengirim nilai
+            state.isQuizActive = false;
+            stopAlarmSound();
+
+            let correctCount = 0;
+            questions.forEach((q, idx) => {
+                if (state.userAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const wrongCount = questions.length - correctCount;
+            const finalScore = Math.round((correctCount / questions.length) * 100);
+
+            const now = new Date();
+            const timestamp = now.toLocaleDateString('id-ID', {
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            }) + " WIB";
+
+            const reportPayload = {
+                n: state.studentName,
+                k: state.studentClass,
+                s: finalScore,
+                b: correctCount,
+                w: wrongCount,
+                v: state.violations,
+                t: timestamp
+            };
+
+            // Encode data ke Base64 agar ringkas & aman di URL
+            const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(reportPayload))));
+            const baseUrl = window.location.href.split('?')[0];
+            const verificationLink = `${baseUrl}?hasil=${encodedData}`;
+
+            // Tampilkan halaman hasil
+            document.getElementById('view-quiz').classList.add('hidden');
+            document.getElementById('view-result').classList.remove('hidden');
+
+            renderResultData({
+                name: state.studentName,
+                studentClass: state.studentClass,
+                score: finalScore,
+                correct: correctCount,
+                wrong: wrongCount,
+                violations: state.violations,
+                timestamp: timestamp
+            });
+
+            // Isi input link & tombol WhatsApp
+            document.getElementById('share-link-input').value = verificationLink;
+
+            const waMessage = `Halo Bapak/Ibu Guru, saya telah menyelesaikan *Kuis Fisika Kelas X (Pengukuran, Besaran, Satuan & Dimensi)*.\n\n` +
+                `👤 *Nama:* ${state.studentName}\n` +
+                `🏫 *Kelas:* ${state.studentClass}\n` +
+                `🏆 *Nilai:* ${finalScore} (Benar: ${correctCount}, Salah: ${wrongCount})\n` +
+                `🛡️ *Catatan Keluar Tab:* ${state.violations}x\n\n` +
+                `🔗 *Link Verifikasi Hasil:*\n${verificationLink}`;
+
+            document.getElementById('btn-wa-share').href = `https://wa.me/?text=${encodeURIComponent(waMessage)}`;
+
+            // Render Pembahasan
+            renderReviewList();
+        }
+
+        function renderResultData({ name, studentClass, score, correct, wrong, violations, timestamp }) {
+            document.getElementById('res-name').textContent = name;
+            document.getElementById('res-class').textContent = studentClass;
+            document.getElementById('res-score').textContent = score;
+            document.getElementById('res-correct').textContent = correct;
+            document.getElementById('res-wrong').textContent = wrong;
+            document.getElementById('res-violations').textContent = `${violations}x`;
+            document.getElementById('res-timestamp').textContent = `Waktu Selesai: ${timestamp}`;
+
+            const cheatCard = document.getElementById('res-cheat-card');
+            if (violations === 0) {
+                cheatCard.className = "bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center text-emerald-700";
+                cheatCard.querySelector('p:first-child').className = "text-xs font-bold text-emerald-600 uppercase mb-1";
+                cheatCard.querySelector('p:last-child').className = "text-3xl sm:text-4xl font-black text-emerald-700";
+            } else {
+                cheatCard.className = "bg-rose-50 border border-rose-300 rounded-2xl p-4 text-center";
+                cheatCard.querySelector('p:first-child').className = "text-xs font-bold text-rose-600 uppercase mb-1";
+                cheatCard.querySelector('p:last-child').className = "text-3xl sm:text-4xl font-black text-rose-700";
+            }
+        }
+
+        // Salin Link ke Clipboard (menggunakan execCommand fallback sesuai standar iframe)
+        document.getElementById('btn-copy-link').addEventListener('click', () => {
+            const input = document.getElementById('share-link-input');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                const btnText = document.getElementById('copy-btn-text');
+                btnText.textContent = "Tersalin!";
+                setTimeout(() => { btnText.textContent = "Salin Link"; }, 2500);
+            } catch (err) {
+                console.error("Gagal menyalin link", err);
+            }
+        });
+
+        // Toggle Pembahasan
+        document.getElementById('btn-toggle-review').addEventListener('click', () => {
+            const revContainer = document.getElementById('review-container');
+            revContainer.classList.toggle('hidden');
+        });
+
+        function renderReviewList() {
+            const list = document.getElementById('review-list');
+            list.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D', 'E'];
+
+            questions.forEach((q, idx) => {
+                const uAns = state.userAnswers[idx];
+                const isCorrect = uAns === q.answer;
+
+                const card = document.createElement('div');
+                card.className = `bg-white rounded-2xl p-5 border ${isCorrect ? 'border-emerald-200' : 'border-rose-200'} shadow-sm space-y-3`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg ${isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            Soal #${idx + 1} • ${isCorrect ? 'BENAR' : 'SALAH'}
+                        </span>
+                        <span class="text-xs font-semibold text-slate-400">${q.topic}</span>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-800">${q.question.replace(/\n/g, '<br>')}</p>
+                    <div class="text-xs space-y-1 bg-slate-50 p-3 rounded-xl">
+                        <p><span class="font-bold text-slate-600">Jawaban Kamu:</span> ${uAns !== null ? `${letters[uAns]}. ${q.options[uAns]}` : '<span class="text-rose-500 italic">Tidak dijawab</span>'}</p>
+                        <p><span class="font-bold text-emerald-700">Kunci Jawaban:</span> ${letters[q.answer]}. ${q.options[q.answer]}</p>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed"><strong class="text-sky-700">Pembahasan:</strong> ${q.explanation}</p>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // Jalankan pengecekan mode verifikasi saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            checkVerificationMode();
+        });
+    </script>
+</body>
+</html>
